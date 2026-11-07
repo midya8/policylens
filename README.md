@@ -3,7 +3,7 @@
 Offline contextual-bandit value estimation from logged actions, rewards and
 propensities. IPS, self-normalized IPS, direct method and doubly robust
 estimates, with support/weight diagnostics and explicit clipping. Dependency-
-free Python3.10+, JSON CLI/API, no online actions or model training.
+free Python 3.10+, JSON CLI/API, no online actions or model training.
 
 ## Known truth, then a deliberately biased shortcut
 
@@ -15,19 +15,19 @@ bash examples/demo.sh
 | Development arm | IPS | SNIPS | Direct | DR | Weight ESS |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Exactly balanced design, wrong reward model | 0.7800 | 0.7800 | 0.5000 | 0.7800 | 4.9231/20 |
-| Same design, weights capped at1 | 0.1850 | 0.6167 | 0.5000 | 0.5350 | 8.4706/20 |
+| Same design, weights capped at 1 | 0.1850 | 0.6167 | 0.5000 | 0.5350 | 8.4706/20 |
 | Seeded2000-row log, oracle reward model | 0.7286 | 0.7533 | 0.7796 | 0.7532 | 478.4011/2000 |
 
-Known population target value0.78, behavior value0.29. Two equally likely
+Known population target value 0.78, behavior value 0.29. Two equally likely
 contexts, two actions. The balanced design matches behavior frequencies
 exactly and uses deterministic mean rewards; it is an arithmetic identity
 fixture, not a random trial. It recovers target value despite a wrong
-constant0.5 reward model. Clipping improves descriptive ESS but biases the
+constant 0.5 reward model. Clipping improves descriptive ESS but biases the
 IPS/DR estimates on this design. Bigger ESS does not certify correctness.
 
 The seeded log is a separate noisy realization with Bernoulli rewards.
 Its reward model is the true conditional expectation, an oracle, not a learned
-or cross-fitted predictor. Even then DR0.7532 does not equal population0.78.
+or cross-fitted predictor. Even then DR 0.7532 does not equal population0.78.
 These selected development fixtures are not a variance, accuracy or causal
 identification benchmark. No estimator is claimed universally best.
 
@@ -105,7 +105,7 @@ seeing estimates needs a separate analysis plan and data discipline.
 
 16 tests cover hand arithmetic, on-policy identities, DR reductions, support
 violations, zero weights, invalid rows, extreme weights/ESS, explicit clipping,
-no mutation, CLI failures and demo regressions. CI runs Python3.10-3.13 and
+no mutation, CLI failures and demo regressions. CI runs Python 3.10-3.13 and
 the offline demo, including a passing exact-truth gate and a failing clipped
 truth-equality gate.
 
