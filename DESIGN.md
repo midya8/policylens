@@ -11,9 +11,9 @@ Strict schema validation does not prove causal identifiability.
 
 ## Estimators
 
-w=pi(a|x)/b(a|x); DM=sum_a pi(a|x)*q(x,a).
-IPS averages w*r, SNIPS divides weighted reward by total weight, DR averages
-DM+w*(r-q(x,a)). The direct method averages DM. Clipping, when requested,
+`w = pi(a|x) / b(a|x)`; `DM = sum_a pi(a|x) * q(x,a)`.
+IPS averages `w*r`, SNIPS divides weighted reward by total weight, DR averages
+`DM + w*(r - q(x,a))`. The direct method averages DM. Clipping, when requested,
 replaces weights in all weighted expressions and is explicitly labeled.
 There is no self-normalized DR variant hidden under the DR name.
 
