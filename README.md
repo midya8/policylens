@@ -16,7 +16,7 @@ bash examples/demo.sh
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Exactly balanced design, wrong reward model | 0.7800 | 0.7800 | 0.5000 | 0.7800 | 4.9231/20 |
 | Same design, weights capped at 1 | 0.1850 | 0.6167 | 0.5000 | 0.5350 | 8.4706/20 |
-| Seeded2000-row log, oracle reward model | 0.7286 | 0.7533 | 0.7796 | 0.7532 | 478.4011/2000 |
+| Seeded 2000-row log, oracle reward model | 0.7286 | 0.7533 | 0.7796 | 0.7532 | 478.4011/2000 |
 
 Known population target value 0.78, behavior value 0.29. Two equally likely
 contexts, two actions. The balanced design matches behavior frequencies
@@ -27,7 +27,7 @@ IPS/DR estimates on this design. Bigger ESS does not certify correctness.
 
 The seeded log is a separate noisy realization with Bernoulli rewards.
 Its reward model is the true conditional expectation, an oracle, not a learned
-or cross-fitted predictor. Even then DR 0.7532 does not equal population0.78.
+or cross-fitted predictor. Even then DR 0.7532 does not equal population 0.78.
 These selected development fixtures are not a variance, accuracy or causal
 identification benchmark. No estimator is claimed universally best.
 
