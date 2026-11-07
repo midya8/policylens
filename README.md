@@ -26,7 +26,7 @@ fixture, not a random trial. It recovers target value despite a wrong
 constant 0.5 reward model. Clipping improves descriptive ESS but biases the
 IPS/DR estimates on this design. Bigger ESS does not certify correctness.
 
-The seeded log is a separate noisy realization with Bernoulli rewards.
+The oracle seeded-log arm is a separate noisy realization with Bernoulli rewards.
 Its reward model is the true conditional expectation, an oracle, not a learned
 or cross-fitted predictor. Even then DR 0.7532 does not equal population 0.78.
 These selected development fixtures are not a variance, accuracy or causal
@@ -57,7 +57,7 @@ within1e-9 and are not silently normalized.
 ```
 
 `--input -` reads stdin. Errors exit2 with stderr and no partial JSON.
-Maximum100000 rows. The library does not mutate inputs, fit a policy/reward
+Maximum 100000 rows. The evaluate command does not mutate inputs, fit a policy/reward
 model, upload data, execute actions or write files.
 
 ## Learn reward predictions without using held-out rewards
@@ -137,9 +137,10 @@ lack of support, poor overlap, hidden confounding or a bad reward model.
 Usual off-policy identification needs correct logging propensities conditional
 on relevant context, consistency of actions/rewards, target support and the
 sampling setup assumed by the estimator. Reward predictions must be trained
-independently or cross-fitted for usual DR theory. No fitting/cross-fitting
-is performed or verified here. Rows lack explicit raw contexts; the caller
-owns how probabilities and predictions were conditioned on them.
+independently or cross-fitted for usual DR theory. The optional crossfit helper excludes held-out row folds but does not verify
+these statistical assumptions. Evaluate rows lack raw contexts; crossfit rows
+provide categorical labels only. The caller owns how probabilities and
+predictions were conditioned on context.
 
 The standard double-robustness result is not a promise that this finite report
 is unbiased regardless of input quality. SNIPS is finite-sample biased.
