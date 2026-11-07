@@ -40,13 +40,13 @@ zero-denominator result or Infinity JSON.
 
 ## Demonstration design
 
-Two equally likely contexts. Behavior(.8,.2)/(.2,.8), target(.1,.9)/(.9,.1),
-reward means(.2,.8)/(.9,.1). Known target value.78 and behavior value.29.
+Two equally likely contexts. Behavior (.8,.2)/(.2,.8), target (.1,.9)/(.9,.1),
+reward means (.2,.8)/(.9,.1). Known target value 0.78 and behavior value 0.29.
 Twenty deterministic mean-reward rows match logging frequencies exactly;
-with wrong q=.5, IPS/SNIPS/DR=.78 but direct=.5. Clip1 changes IPS=.185,
-SNIPS=.6166667 and DR=.535 while ESS rises4.9231to8.4706. This isolates
+with wrong q=.5, IPS/SNIPS/DR=.78 but direct=.5. Clip 1 changes IPS=.185,
+SNIPS=.6166667 and DR=.535 while ESS rises 4.9231 to 8.4706. This isolates
 arithmetic on a constructed design, not general estimator performance.
-The2000-row seed13 Bernoulli log uses oracle q and gives DR=.7532475,
+The 2000-row seed 13 Bernoulli log uses oracle q and gives DR=.7532475,
 not exact population truth. Selected development fixtures, no power/variance
 study, training benchmark or causal proof.
 
