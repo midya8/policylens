@@ -3,7 +3,7 @@
 Offline contextual-bandit value estimation from logged actions, rewards and
 propensities. IPS, self-normalized IPS, direct method and doubly robust
 estimates, with support/weight diagnostics and explicit clipping. Dependency-
-free Python 3.10+, JSON CLI/API, no online actions or model training.
+free Python 3.10+, JSON CLI/API, no online actions; optional held-out tabular reward fitting.
 
 ## Known truth, then a deliberately biased shortcut
 
@@ -17,6 +17,7 @@ bash examples/demo.sh
 | Exactly balanced design, wrong reward model | 0.7800 | 0.7800 | 0.5000 | 0.7800 | 4.9231/20 |
 | Same design, weights capped at 1 | 0.1850 | 0.6167 | 0.5000 | 0.5350 | 8.4706/20 |
 | Seeded 2000-row log, oracle reward model | 0.7286 | 0.7533 | 0.7796 | 0.7532 | 478.4011/2000 |
+| Same noisy log, five-fold tabular reward model | 0.7286 | 0.7533 | 0.7496 | 0.7509 | 478.4011/2000 |
 
 Known population target value 0.78, behavior value 0.29. Two equally likely
 contexts, two actions. The balanced design matches behavior frequencies
@@ -58,6 +59,52 @@ within1e-9 and are not silently normalized.
 `--input -` reads stdin. Errors exit2 with stderr and no partial JSON.
 Maximum100000 rows. The library does not mutate inputs, fit a policy/reward
 model, upload data, execute actions or write files.
+
+## Learn reward predictions without using held-out rewards
+
+`evaluate` still accepts supplied predictions unchanged. The optional `crossfit`
+command instead takes exact row fields `context`, `action`, `reward`, `behavior`,
+`target`. Contexts are explicit categorical strings. It shuffles row indices with
+an isolated seeded RNG, assigns balanced folds, and trains each prediction on all
+folds except that row's entire fold. It fits only observed context-action cell
+reward means, shrunk toward a fixed prior:
+
+`q = (training_reward_sum + prior_strength * prior_mean) / (training_count + prior_strength)`
+
+Unseen cells return `prior_mean` exactly, even for tiny positive prior strengths.
+Defaults: five folds, seed 0, prior mean 0.5, prior strength 1. No tuning occurs.
+Folds must be 2 through min(20, n); prior strength is positive and at most 1e6.
+
+```sh
+python -m policylens crossfit --input examples/categorical.json --folds 3 --seed 17
+```
+
+The JSON result contains `prepared_input` (usable by `evaluate`), `cross_fit`
+(split seed, per-row fold assignment, per-action training counts and prior-only
+prediction counts), and `evaluation`. Source row/action order is preserved;
+input is not mutated. Library `cross_fit` returns preparation and diagnostics;
+call `evaluate(result['prepared_input'])` separately.
+
+On the same 2000-row noisy development log, five folds/seed 17 with the fixed
+default prior give direct 0.7496455 and DR 0.7509088, versus oracle DR 0.7532475
+and known population value 0.78. All folds have 400 rows and no cell needs the
+prior-only fallback. **This is not an improvement over the oracle arm**, an
+independent test set, or an estimator ranking. Hyperparameters were not selected
+by a sweep; the fixture remains development data.
+
+Whole-fold reward perturbation tests confirm held-out predictions cannot use
+those rewards. This is row-iid cross-fitting, not group/time splitting: repeated
+people, clustered logs and adaptive trajectories can still leak across folds.
+Context encoding, target policy and hyperparameters must be fixed independently
+of evaluation outcomes. Sparse/unseen cells can be mostly prior, and held-out
+prediction does not make the categorical reward model correct. Behavior
+probabilities are not learned or authenticated. Unsupported target actions remain
+flagged after fitting. No confidence intervals or deployment decision are added.
+
+Cross-fitting background: [Kallus et al. (2022), introduction and algorithm discussion](https://proceedings.mlr.press/v162/kallus22a/kallus22a.pdf).
+PolicyLens implements only ordinary contextual-bandit estimators and a tabular
+reward-model helper, not that paper's distributionally robust algorithms or its
+efficiency theorem. No new statistical method.
 
 ## Estimators and diagnostics
 
@@ -103,7 +150,7 @@ seeing estimates needs a separate analysis plan and data discipline.
 
 ## Verification and attribution
 
-16 tests cover hand arithmetic, on-policy identities, DR reductions, support
+28 tests cover hand arithmetic, on-policy identities, DR reductions, support
 violations, zero weights, invalid rows, extreme weights/ESS, explicit clipping,
 no mutation, CLI failures and demo regressions. CI runs Python 3.10-3.13 and
 the offline demo, including a passing exact-truth gate and a failing clipped
