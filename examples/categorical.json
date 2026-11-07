@@ -1,0 +1,164 @@
+{
+  "action_names": [
+    "a",
+    "b"
+  ],
+  "rows": [
+    {
+      "context": "left",
+      "action": 0,
+      "reward": 1.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "left",
+      "action": 1,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "left",
+      "action": 0,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "left",
+      "action": 1,
+      "reward": 1.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "left",
+      "action": 0,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "left",
+      "action": 1,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "right",
+      "action": 0,
+      "reward": 1.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "right",
+      "action": 1,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "right",
+      "action": 0,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "right",
+      "action": 1,
+      "reward": 1.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "right",
+      "action": 0,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    },
+    {
+      "context": "right",
+      "action": 1,
+      "reward": 0.0,
+      "behavior": [
+        0.5,
+        0.5
+      ],
+      "target": [
+        0.25,
+        0.75
+      ]
+    }
+  ]
+}
