@@ -3,7 +3,8 @@
 ## Input and authority boundary
 
 This is local point-estimate arithmetic, not an online policy engine. No
-network requests, actions, reward fitting or automated deployment. Callers
+network requests, actions or automated deployment. Optional crossfit fits local
+categorical reward means; evaluate itself never fits a model. Callers
 provide complete behavior/target action probabilities and reward predictions
 aligned by explicit action names. Raw contexts are not carried; provenance,
 conditioning and independent/cross-fitted predictions are caller obligations.
@@ -58,6 +59,52 @@ setup, with independent or cross-fitted reward predictions as appropriate.
 It does not fix hidden confounding, misspecified context or zero support.
 SNIPS/clipping have finite-sample bias. No confidence bounds, multiple-policy
 selection correction, sequential monitoring or deploy/no-deploy decision.
+
+## Learn reward predictions without using held-out rewards
+
+`evaluate` still accepts supplied predictions unchanged. The optional `crossfit`
+command instead takes exact row fields `context`, `action`, `reward`, `behavior`,
+`target`. Contexts are explicit categorical strings. It shuffles row indices with
+an isolated seeded RNG, assigns balanced folds, and trains each prediction on all
+folds except that row's entire fold. It fits only observed context-action cell
+reward means, shrunk toward a fixed prior:
+
+`q = (training_reward_sum + prior_strength * prior_mean) / (training_count + prior_strength)`
+
+Unseen cells return `prior_mean` exactly, even for tiny positive prior strengths.
+Defaults: five folds, seed 0, prior mean 0.5, prior strength 1. No tuning occurs.
+Folds must be 2 through min(20, n); prior strength is positive and at most 1e6.
+
+```sh
+python -m policylens crossfit --input examples/categorical.json --folds 3 --seed 17
+```
+
+The JSON result contains `prepared_input` (usable by `evaluate`), `cross_fit`
+(split seed, per-row fold assignment, per-action training counts and prior-only
+prediction counts), and `evaluation`. Source row/action order is preserved;
+input is not mutated. Library `cross_fit` returns preparation and diagnostics;
+call `evaluate(result['prepared_input'])` separately.
+
+On the same 2000-row noisy development log, five folds/seed 17 with the fixed
+default prior give direct 0.7496455 and DR 0.7509088, versus oracle DR 0.7532475
+and known population value 0.78. All folds have 400 rows and no cell needs the
+prior-only fallback. **This is not an improvement over the oracle arm**, an
+independent test set, or an estimator ranking. Hyperparameters were not selected
+by a sweep; the fixture remains development data.
+
+Whole-fold reward perturbation tests confirm held-out predictions cannot use
+those rewards. This is row-iid cross-fitting, not group/time splitting: repeated
+people, clustered logs and adaptive trajectories can still leak across folds.
+Context encoding, target policy and hyperparameters must be fixed independently
+of evaluation outcomes. Sparse/unseen cells can be mostly prior, and held-out
+prediction does not make the categorical reward model correct. Behavior
+probabilities are not learned or authenticated. Unsupported target actions remain
+flagged after fitting. No confidence intervals or deployment decision are added.
+
+Cross-fitting background: [Kallus et al. (2022), introduction and algorithm discussion](https://proceedings.mlr.press/v162/kallus22a/kallus22a.pdf).
+PolicyLens implements only ordinary contextual-bandit estimators and a tabular
+reward-model helper, not that paper's distributionally robust algorithms or its
+efficiency theorem. No new statistical method.
 
 ## Sources
 
