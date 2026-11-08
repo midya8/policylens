@@ -162,3 +162,33 @@ Standard estimators, original small implementation, not new theory:
 - [Karampatziakis et al., Empirical Likelihood for Contextual Bandits](https://www.arxiv.org/pdf/1906.03323v2), IPS/SNIPS comparison and reward-predictor discussion. This project does not implement their empirical-likelihood estimator.
 
 See [DESIGN.md](DESIGN.md). MIT licensed.
+
+## Live row-contribution inspector (v0.2)
+
+[Open the inspector](https://midya8.github.io/policylens/) to inspect five fixed
+public synthetic logs. Mix each original target with behavior, edit one observed
+reward and apply an explicit cap. Follow all IPS/DR row contributions, normalized
+SNIPS weights, signed cap removals, positive-weight breakpoints and fixed-model
+delete-one-row reports. The cap path includes negative DR values and does not
+recommend a cap. Unsupported actions remain flagged; zero observed target mass
+leaves SNIPS undefined. Increasing descriptive ESS is not a validity guarantee.
+
+The original balanced/clipped/noisy-oracle/crossfit reports above stay unchanged
+and remain separately visible. 36 Python tests plus four Node/actual-Chrome tests
+include 160 exact Fraction controls, 80 independent integer-grid controls and
+95 edit witnesses. Installed reproduction retains all original commands/modes.
+New `audit` wraps the original evaluator without changing its limits; audits
+are bounded to 256 rows/16 actions. The browser is an independent implementation
+for supplied public fixtures, not a user-data uploader or a policy trainer.
+
+```sh
+python -m policylens audit --input examples/log.json --clip 1
+python -m policylens ledger-demo
+python -m policylens.ledger_export
+bash examples/verify_wheel.sh
+```
+
+[Derivation, seven sources, reproduction and numerical limits](LEDGER.md).
+No new estimator, confidence bound, safe-deployment, causal or policy-performance
+claim. Delete-one-row diagnostics hold reward predictions and policies fixed;
+they are not refitting, cross-validation or a variance estimate.
