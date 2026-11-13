@@ -1,6 +1,6 @@
 # PolicyLens design
 
-## Input and authority boundary
+## Inputs and scope
 
 This is local point-estimate arithmetic, not an online policy engine. No
 network requests, actions or automated deployment. Optional crossfit fits local
@@ -36,8 +36,8 @@ probability vectors. No automatic normalization or final clipping. SNIPS
 uses weights divided by their maximum, preserving its ratio while avoiding
 large raw sums. ESS uses those same scaled weights, avoiding raw squares.
 Means divide contributions before fsum; unrepresentable weights/results fail.
-If every observed target weight is zero, SNIPS=null and ESS=0. No made-up
-zero-denominator result or Infinity JSON.
+If every observed target weight is zero, SNIPS=null and ESS=0. An undefined denominator stays explicit; unrepresentable results are rejected
+rather than emitted as Infinity JSON.
 
 ## Demonstration design
 

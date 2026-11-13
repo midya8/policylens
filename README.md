@@ -5,7 +5,15 @@ propensities. IPS, self-normalized IPS, direct method and doubly robust
 estimates, with support/weight diagnostics and explicit clipping. Dependency-
 free Python 3.10+, JSON CLI/API, no online actions; optional held-out tabular reward fitting.
 
-## Known truth, then a deliberately biased shortcut
+## Evaluation, reward fitting and row diagnostics
+
+`evaluate` computes point estimates from supplied predictions. `crossfit` fits
+categorical reward means without using each row's held-out fold. `audit` and
+the browser expose individual contributions and explicit clipping choices.
+These calculations do not learn or select the target policy, authenticate the
+logging probabilities or authorize deployment.
+
+## Fixed development examples
 
 ```bash
 python -m policylens demo
@@ -47,8 +55,8 @@ report = evaluate(payload)  # optional clip=1
 Input has exactly `action_names` and `rows`. Each row contains action index,
 observed reward, full behavior probabilities, full target probabilities and
 one reward prediction per action. Action order is shared across every row.
-Rewards and reward predictions must be in[0,1]; distributions must sum to1
-within1e-9 and are not silently normalized.
+Rewards and reward predictions must be in [0,1]; distributions must sum to 1
+within 1e-9 and are not silently normalized.
 
 ```json
 {"action_names":["a","b"],"rows":[
@@ -56,7 +64,7 @@ within1e-9 and are not silently normalized.
   "target":[0.25,0.75],"reward_model":[0.6,0.4]}]}
 ```
 
-`--input -` reads stdin. Errors exit2 with stderr and no partial JSON.
+`--input -` reads stdin. Errors exit 2 with stderr and no partial JSON.
 Maximum 100000 rows. The evaluate command does not mutate inputs, fit a policy/reward
 model, upload data, execute actions or write files.
 
@@ -116,7 +124,7 @@ For each row, `w=target[action]/behavior[action]` and
 - Direct method: `mean(dm)`.
 - DR: `mean(dm+w*(reward-reward_model[action]))`.
 
-No output estimate is silently clamped to[0,1]. Importance estimators can
+No output estimate is silently clamped to [0,1]. Importance estimators can
 leave the reward range in finite samples. Weight ESS uses normalized weights
 to avoid squaring extreme raw weights: `(sum(w))^2/sum(w^2)`. It is a
 concentration diagnostic, not a statistical coverage/validity guarantee.
@@ -124,7 +132,7 @@ concentration diagnostic, not a statistical coverage/validity guarantee.
 Full behavior vectors let the tool flag target probability on an action with
 zero logging support at each supplied context. Reports keep numeric estimates
 but label this `support_violation_no_nonparametric_identification`, rather
-than laundering it through the reward model. A logged action with zero
+than treating reward predictions as a substitute for support. A logged action with zero
 behavior propensity is invalid and rejected. Observed-context checks cannot
 prove support on unseen contexts or authenticate supplied propensities.
 
@@ -151,11 +159,12 @@ seeing estimates needs a separate analysis plan and data discipline.
 
 ## Verification and attribution
 
-28 tests cover hand arithmetic, on-policy identities, DR reductions, support
+The 28 original tests cover hand arithmetic, on-policy identities, DR reductions, support
 violations, zero weights, invalid rows, extreme weights/ESS, explicit clipping,
 no mutation, CLI failures and demo regressions. CI runs Python 3.10-3.13 and
 the offline demo, including a passing exact-truth gate and a failing clipped
-truth-equality gate.
+truth-equality gate. The current suite has 36 Python and four Node/actual-Chrome
+tests, including the row-contribution inspector below.
 
 Standard estimators, original small implementation, not new theory:
 - [Dudik et al., Doubly Robust Policy Evaluation and Optimization](https://arxiv.org/pdf/1503.02834v1.pdf)
