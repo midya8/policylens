@@ -140,6 +140,29 @@ Optional clipping replaces w by min(w,clip) for IPS, SNIPS and DR, reports the
 cap explicitly and labels possible bias. It is not an automatic repair for
 lack of support, poor overlap, hidden confounding or a bad reward model.
 
+## Reward-coordinate checks
+
+Changing the reward scale is an arithmetic check, not a new policy comparison.
+For `r_new = a*r + b` and the same transformation of every reward prediction,
+IPS becomes `a*IPS + b*mean(weight)`. SNIPS, when its denominator is nonzero,
+and direct/DR estimates become `a*estimate + b`. This holds with the chosen
+clipped weights too. IPS does not generally shift by `b`: its weights are not
+forced to average one. Undefined zero-weight SNIPS stays null. Support warnings
+and weight diagnostics do not change when only rewards/predictions change.
+
+Three regression tests reuse five public cases at four target-mixture settings
+and four caps: 240 joint reward/model transformations, 240 reward-only
+transformations and 80 reward-complement checks. The transformations include
+positive, negative and zero scales while keeping rewards/predictions in [0,1].
+Reward-only checks retain the original reward model and its DR offset rather
+than incorrectly treating it as transformed. Controls include unsupported
+actions, zero observed target mass and nonunit weight means.
+
+These are finite consistency checks on the same implementation, not independent
+estimator references, coverage guarantees or evidence of valid propensities.
+The original exact-truth, noisy-log and clipping counterexamples remain needed.
+No reward fitting, estimator, input bound or saved witness changes.
+
 ## Assumptions and limits
 
 Usual off-policy identification needs correct logging propensities conditional
@@ -163,7 +186,7 @@ The 28 original tests cover hand arithmetic, on-policy identities, DR reductions
 violations, zero weights, invalid rows, extreme weights/ESS, explicit clipping,
 no mutation, CLI failures and demo regressions. CI runs Python 3.10-3.13 and
 the offline demo, including a passing exact-truth gate and a failing clipped
-truth-equality gate. The current suite has 36 Python and four Node/actual-Chrome
+truth-equality gate. The current suite has 39 Python and four Node/actual-Chrome
 tests, including the row-contribution inspector below.
 
 Standard estimators, original small implementation, not new theory:
